@@ -1,7 +1,6 @@
 const User = require('../models/user');
-
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const Crypt = require('cryptr');
+const crypt = new Crypt(process.env.encryptionKey);
 
 getUsers = (req, res) => {
     User.find({})
@@ -19,20 +18,14 @@ createUser = (req, res) => {
     const {body} = req
     const user = new User();
 
-    bcrypt.hash(body.password, saltRounds, (err, hash) => {
-        user.firstName = body.firstName
-        user.lastName = body.lastName
-        user.email = body.email
-        user.password = hash
+    user.firstName = body.firstName
+    user.lastName = body.lastName
+    user.email = body.email
+    user.password = crypt.encrypt(body.password)
 
-        user.save()
-            .then(() => {
-                User.findOne({email: body.email})
-                    .then(docs => res.json(docs))
-                    .catch(err => console.log(err))
-            })
-            .catch(err => console.log(err))
-    });
+    user.save()
+        .then(() => res.json({_id: `${user._id}`}))
+        .catch(err => console.log(err))
 }
 
 updateUser = (req, res) => {
