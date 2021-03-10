@@ -13,11 +13,12 @@ getMessage = (req, res) => {
 }
 
 createMessage = (token, req, res) => {
+    const {body} = req
     const message = new Message();
 
-    message.senderID = token['f_name']
-    message.receiverID = token['l_name']
-    message.textMessage = token['email']
+    message.senderID = body.senderID
+    message.receiverID = body.receiverID
+    message.textMessage = body.textMessage
 
     message.save()
         .then(() => docs => res.json(docs))

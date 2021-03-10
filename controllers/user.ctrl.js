@@ -1,5 +1,8 @@
 const User = require('../models/user');
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 getUsers = (req, res) => {
     User.find({})
         .then(docs => res.json(docs))
@@ -12,17 +15,24 @@ getUser = (req, res) => {
         .catch(err => console.log(err))
 }
 
-createUser = (token, req, res) => {
+createUser = (req, res) => {
+    const {body} = req
     const user = new User();
 
-    user.firstName = token['f_name']
-    user.lastName = token['l_name']
-    user.email = token['email']
-    user.password = token['avatar']
+    bcrypt.hash(body.password, saltRounds, (err, hash) => {
+        user.firstName = body.firstName
+        user.lastName = body.lastName
+        user.email = body.email
+        user.password = hash
 
-    user.save()
-        .then(() => docs => res.json(docs))
-        .catch(err => console.log(err))
+        user.save()
+            .then(() => {
+                User.findOne({email: body.email})
+                    .then(docs => res.json(docs))
+                    .catch(err => console.log(err))
+            })
+            .catch(err => console.log(err))
+    });
 }
 
 updateUser = (req, res) => {
