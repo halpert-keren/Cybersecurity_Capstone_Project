@@ -6,5 +6,5 @@ const messageSchema = new Schema({
     textMessage: {type: String, required: true},
 }, {collection: 'messages'});
 
-const Message = model('User', messageSchema);
+const Message = model('Message', messageSchema);
 module.exports = Message;

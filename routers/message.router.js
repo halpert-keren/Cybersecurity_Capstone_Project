@@ -3,10 +3,10 @@ const router = new Router();
 
 const messageController = require('../controllers/message.ctrl');
 
-router.get('/', messageController.getUsers);
-router.get('/:id', messageController.getUser);
-router.post('/', messageController.createUser);
-router.put('/:id', messageController.updateUser);
-router.delete('/:id', messageController.deleteUser);
+router.get('/', messageController.getMessages);
+router.get('/:id', messageController.getMessage);
+router.post('/', messageController.createMessage);
+router.put('/:id', messageController.updateMessage);
+router.delete('/:id', messageController.deleteMessage);
 
 module.exports = {router};
