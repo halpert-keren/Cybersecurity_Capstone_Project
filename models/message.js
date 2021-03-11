@@ -1,8 +1,8 @@
 const {Schema, model} = require('mongoose');
 
 const messageSchema = new Schema({
-    senderID: {type: String, required: true},
-    receiverID: {type: String, required: true},
+    sender: {type: String, required: true},
+    receiver: {type: String, required: true},
     textMessage: {type: String, required: true},
 }, {collection: 'messages'});
 

@@ -18,8 +18,7 @@ createUser = (req, res) => {
     const {body} = req
     const user = new User();
 
-    user.firstName = body.firstName
-    user.lastName = body.lastName
+    user.username = body.username
     user.email = body.email
     user.password = crypt.encrypt(body.password)
 
