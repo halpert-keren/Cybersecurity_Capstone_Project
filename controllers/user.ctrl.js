@@ -16,6 +16,7 @@ getUser = (req, res) => {
 
 createUser = (req, res) => {
     const {body} = req
+    // username, password, email
     const user = new User();
 
     user.username = body.username
@@ -29,9 +30,10 @@ createUser = (req, res) => {
 
 updateUser = (req, res) => {
     const {body} = req
+    // password
 
-    User.updateOne({_id: req.params.id}, body)
-        .then(() => docs => res.json(docs))
+    User.updateOne({_id: req.params.id}, {$set: {password: crypt.encrypt(body.password), passCode: ''}})
+        .then(docs => res.json(docs))
         .catch(err => console.log(err))
 }
 

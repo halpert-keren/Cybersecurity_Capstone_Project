@@ -3,10 +3,10 @@ const Crypt = require('cryptr');
 const crypt = new Crypt(process.env.encryptionKey);
 
 getMessages = (req, res) => {
-    if(req.query.email) {
+    if(req.query.username) {
         Message.find({
-            $or: [{sender: req.query.email}, {receiver: req.query.email}]
-        })
+            $or: [{sender: req.query.username}, {receiver: req.query.username}]
+        }).sort({_id: -1})
             .then(docs => {
                 let results = []
                 for (const doc of docs) {
@@ -20,7 +20,7 @@ getMessages = (req, res) => {
             })
             .catch(err => console.log(err))
     } else {
-        Message.find({})
+        Message.find({}).sort({_id: -1})
             .then(docs => {
                 let results = []
                 for (const doc of docs) {
@@ -48,6 +48,7 @@ getMessage = (req, res) => {
 
 createMessage = (req, res) => {
     const {body} = req
+    // sender, receiver, textMessage
     const message = new Message();
 
     message.sender = body.sender
@@ -61,8 +62,9 @@ createMessage = (req, res) => {
 
 updateMessage = (req, res) => {
     const {body} = req
+    // textMessage
 
-    Message.updateOne({_id: req.params.id}, body)
+    Message.updateOne({_id: req.params.id}, {$set: {textMessage: crypt.encrypt(body.textMessage)}})
         .then(() => docs => res.json(docs))
         .catch(err => console.log(err))
 }
