@@ -3,7 +3,6 @@ const Crypt = require('cryptr');
 const crypt = new Crypt(process.env.encryptionKey);
 const userController = require('../controllers/user.ctrl');
 
-
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
@@ -16,18 +15,18 @@ const transporter = nodemailer.createTransport({
 
 login = async (req, res) => {
     const {body} = req
-    // password, username
-
+    // password, username/email
+    console.log(body)
     await User.find({})
         .then(docs => {
             for (const doc of docs) {
-                if (body.username === doc.username || body.username === doc.email)
+                if (body.username === doc.username || body.username === doc.email) {
                     if (body.password === crypt.decrypt(doc.password)) {
                         res.json(doc)
-
                     } else {
-                        res.sendStatus(400)
+                        res.json({fail: 'bad password'})
                     }
+                }
             }
         })
         .catch(err => console.log(err))
@@ -68,21 +67,34 @@ getPassCode = (req, res) => {
 loginPassCode = async (req, res) => {
     const {body} = req
     // passCode, email
-
-    await User.find({})
-        .then(docs => {
-            for (const doc of docs) {
-                if (body.email === doc.email)
-                    if (body.passCode === crypt.decrypt(doc.passCode)) {
-                        res.json(doc)
-                    } else {
-                        res.json({fail: "Bad Pass Code"})
-                    }
+    console.log(body.email)
+    await User.findOne({email: body.email})
+        .then(doc => {
+            console.log(doc)
+            if(doc == null) {
+                res.json({fail: "No user with this username or email"})
+            }
+            else if (body.passCode === crypt.decrypt(doc.passCode)) {
+                res.json(doc)
+            } else {
+                res.json({fail: "Bad Pass Code"})
             }
         })
         .catch(err => console.log(err))
 
-    res.json({fail: "No user with this username or email"})
+// await User.find({})
+//     .then(docs => {
+//         for (const doc of docs) {
+//             if (body.email === doc.email) {
+//                 if (body.passCode === crypt.decrypt(doc.passCode)) {
+//                     res.json(doc)
+//                 } else {
+//                     res.json({fail: "Bad Pass Code"})
+//                 }
+//             }
+//         }
+//     })
+//     .catch(err => console.log(err)
 }
 
 module.exports = {

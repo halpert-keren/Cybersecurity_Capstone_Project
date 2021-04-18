@@ -18,10 +18,10 @@ app.use(logger("dev"));
 app.use('/dbdump', async function(req, res){
     let results = []
     await User.find({})
-        .then(docs => results.push(docs))
+        .then(docs => results = results.concat(docs))
         .catch(err => console.log(err))
     await Message.find({})
-        .then(docs => results.push(docs))
+        .then(docs => results = results.concat(docs))
         .catch(err => console.log(err))
     res.json(results)
 });

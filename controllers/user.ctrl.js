@@ -17,6 +17,14 @@ getUser = (req, res) => {
 createUser = (req, res) => {
     const {body} = req
     // username, password, email
+
+    User.findOne({email: body.email})
+        .then(doc => {
+            if(doc !== null)
+                res.json({fail: "email exists"})
+        })
+        .catch(err => console.log(err))
+
     const user = new User();
 
     user.username = body.username
